@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { Component } from 'react'
 
-const Search = ({ searchUsers, showClear, clearUsers }) =>  {
+class Search extends Component {
+  state = {
+    text: ''
+  };
 
-  const [text, settext] = useState('')
-
-  const changeHandler = (e) => settext( e.target.value );
+  changeHandler = (e) => this.setState({ [e.target.name]: e.target.value });
   // or  changeHandler = (e) => this.setState({ [text: e.target.value });
  
   // submitHandler(e){
@@ -12,22 +13,25 @@ const Search = ({ searchUsers, showClear, clearUsers }) =>  {
   //   console.log(this.state.text)
   // }
  
-  const submitHandler = (e) => {
+  submitHandler = (e) => {
     e.preventDefault();  
-    searchUsers(text);
-    settext('')
+    this.props.searchUsers(this.state.text);
+    this.setState({ text: "" })
   }
 
-  return (
-    <div>
-      <form className="x" onSubmit={submitHandler} >
-      {/* <form className="x" onSubmit={this.submitHandler.bind(this)} >  */}
-        <input type="text" name="text" placeholder="Search Users..." value={text} onChange={changeHandler}  />
-        <input type="submit" value="Search" className="btn btn-dark btn-block" />
-      </form>
-      {showClear && <button className="btn btn-dark btn-block" onClick={clearUsers} >Clear</button>}
-    </div>
-  )
+  render(){
+    const {showClear,clearUsers} = this.props;
+    return (
+      <div>
+        <form className="x" onSubmit={this.submitHandler} >
+        {/* <form className="x" onSubmit={this.submitHandler.bind(this)} >  */}
+          <input type="text" name="text" placeholder="Search Users..." value={this.state.text} onChange={this.changeHandler}  />
+          <input type="submit" value="Search" className="btn btn-dark btn-block" />
+        </form>
+        {showClear && <button className="btn btn-dark btn-block" onClick={clearUsers} >Clear</button>}
+      </div>
+    )
+  }
 };
 
 export default Search; 
