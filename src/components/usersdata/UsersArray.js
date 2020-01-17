@@ -1,7 +1,12 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import UsersCard from './UsersCard';
+import GithubContext from '../../context/github/githubContext';
 
-const UsersArray = ({users}) => {
+const UsersArray = () => {
+
+  const gitContext = useContext(GithubContext);
+  const { users } = gitContext;
+
   return (
     <div style={userStyle}>
       {users.map((user) => (
