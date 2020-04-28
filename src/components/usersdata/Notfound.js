@@ -4,7 +4,7 @@ const Notfound = () => {
   return (
     <div>
       <h1>Not Found</h1>
-      <p className='lead' >The User u r looking for is being not found!!</p>
+      <p>The Movie u r looking for is being not found!!</p>
     </div>
   )
 }

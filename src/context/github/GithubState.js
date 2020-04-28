@@ -59,6 +59,7 @@ const GithubState = (props) => {
       top5 +=1
     }
     });
+    console.log(state.readme)
     // setCreatedRepos(createdRepos);
     // setReadme(readme);
     // setUser_repo_url(user_repo_url);
