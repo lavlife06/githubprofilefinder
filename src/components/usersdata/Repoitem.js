@@ -4,7 +4,7 @@ const RepoItem = ({ repo, top5readme, repo_url }) => {
   return (
     <div className="card">
       <h3>
-        <a href={repo_url} target="_blank">
+        <a href={repo_url} rel="noopener noreferrer" target="_blank">
           {repo}
         </a>
         <p>{top5readme}</p>
