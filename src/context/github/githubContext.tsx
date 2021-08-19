@@ -1,5 +1,5 @@
-import { createContext } from "react";
+import { createContext, useContext } from "react";
+import { InitialState } from "../../interfaces/contextInterfaces";
 
-const GithubContext = createContext();
-
-export default GithubContext;
+export const GithubContext = createContext<InitialState | null>(null);
+export const useGlobalContext = () => useContext(GithubContext);
