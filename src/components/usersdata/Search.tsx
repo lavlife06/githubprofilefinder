@@ -1,17 +1,18 @@
-import React, { useState, useContext } from "react";
-import GithubContext from "../../context/github/githubContext";
+/* eslint-disable react-hooks/rules-of-hooks */
+import React, { useState } from "react";
+import { useGlobalContext } from "../../context/github/githubContext";
 
 const Search = () => {
-    const gitContext = useContext(GithubContext);
+    const [text, settext] = useState<string>("");
 
-    const [text, settext] = useState("");
+    const { searchUsers, users, clearUsers } = useGlobalContext();
 
     const changeHandler = (e: React.ChangeEvent<HTMLInputElement>): void =>
         settext(e.target.value);
 
     const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        gitContext.searchUsers(text);
+        searchUsers(text);
         settext("");
     };
 
@@ -31,11 +32,8 @@ const Search = () => {
                     className="btn btn-dark btn-block"
                 />
             </form>
-            {gitContext.users.length > 0 && (
-                <button
-                    className="btn btn-dark btn-block"
-                    onClick={gitContext.clearUsers}
-                >
+            {users.length > 0 && (
+                <button className="btn btn-dark btn-block" onClick={clearUsers}>
                     Clear
                 </button>
             )}
