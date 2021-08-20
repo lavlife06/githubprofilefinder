@@ -1,16 +1,16 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useState } from "react";
+import React, { ReactElement, useState } from "react";
 import { useGlobalContext } from "../../context/github/githubContext";
 
-const Search = () => {
-    const [text, settext] = useState<string>("");
+const Search = (): ReactElement => {
+    const [text, settext] = useState<string | "">("");
 
     const { searchUsers, users, clearUsers } = useGlobalContext();
 
     const changeHandler = (e: React.ChangeEvent<HTMLInputElement>): void =>
         settext(e.target.value);
 
-    const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+    const submitHandler = (e: React.FormEvent<HTMLFormElement>): void => {
         e.preventDefault();
         searchUsers(text);
         settext("");
@@ -18,13 +18,13 @@ const Search = () => {
 
     return (
         <div>
-            <form className="x" onSubmit={(e) => submitHandler(e)}>
+            <form className="x" onSubmit={submitHandler}>
                 <input
                     type="text"
                     name="text"
                     placeholder="Search Users..."
                     value={text}
-                    onChange={(e) => changeHandler(e)}
+                    onChange={changeHandler}
                 />
                 <input
                     type="submit"

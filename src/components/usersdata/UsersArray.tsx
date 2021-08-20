@@ -1,15 +1,15 @@
-import React, { useContext } from "react";
+import React from "react";
 import UsersCard from "./UsersCard";
 import { useGlobalContext } from "../../context/github/githubContext";
 
 const UsersArray = () => {
-    // const { users } = useGlobalContext();
+    const { users } = useGlobalContext();
 
     return (
         <div style={userStyle}>
-            {/* {users.map((user) => (
-                <UsersCard key={user.id} user={user} />
-            ))} */}
+            {users.map((user, index) => (
+                <UsersCard key={index} user={user} />
+            ))}
         </div>
     );
 };
