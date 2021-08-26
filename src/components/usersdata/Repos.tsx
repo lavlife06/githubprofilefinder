@@ -1,22 +1,14 @@
-import React, { useContext } from "react";
+import React from "react";
 import Repoitem from "./Repoitem";
 import { useGlobalContext } from "../../context/github/githubContext";
 
-interface GitContextProps {
-    user_repo_url: string;
-    readme: string;
-    createdRepos: any;
-    repos_id: string;
-}
-
 const Repos = () => {
-    console.log(useGlobalContext());
-    // const { user_repo_url, readme, createdRepos, repos_id } =
-    //     useGlobalContext();
+    const { user_repo_url, readme, createdRepos, repos_id } =
+        useGlobalContext();
 
     return (
         <div>
-            {/* {createdRepos.map((repo, index) => {
+            {createdRepos.map((repo: string, index: number) => {
                 return (
                     <Repoitem
                         repo={repo}
@@ -25,8 +17,7 @@ const Repos = () => {
                         top5readme={readme[index]}
                     />
                 );
-            })} */}
-            hii
+            })}
         </div>
     );
 };

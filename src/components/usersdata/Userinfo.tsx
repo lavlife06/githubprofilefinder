@@ -1,39 +1,36 @@
-import React, { useEffect, Fragment, useContext } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, Fragment } from "react";
+import { Link, RouteComponentProps } from "react-router-dom";
 import Repos from "./Repos";
 import { useGlobalContext } from "../../context/github/githubContext";
 
-// interface AppProps {
-//     match: { params: { login: string } };
-// }
+type TParams = { login: string };
 
-// const Userinfo = ({ match }) => {
-const Userinfo = () => {
-    // const { particularuser, getUser, getUserRepos } = useGlobalContext();
-    // useEffect(() => {
-    //     getUser(login);
-    //     getUserRepos(login);
-    //     // eslint-disable-next-line
-    // }, []);
+const Userinfo = ({ match }: RouteComponentProps<TParams>) => {
+    const { particularuser, getUser, getUserRepos } = useGlobalContext();
+    useEffect(() => {
+        getUser(match.params.login);
+        getUserRepos(match.params.login);
+        // eslint-disable-next-line
+    }, []);
 
-    // const {
-    //     name,
-    //     avatar_url,
-    //     bio,
-    //     login,
-    //     html_url,
-    //     followers,
-    //     following,
-    //     public_repos,
-    //     blog,
-    //     public_gists,
-    //     location,
-    //     company,
-    // } = particularuser;
+    const {
+        name,
+        avatar_url,
+        bio,
+        login,
+        html_url,
+        followers,
+        following,
+        public_repos,
+        blog,
+        public_gists,
+        location,
+        company,
+    } = particularuser;
 
     return (
         <Fragment>
-            {/* <Link to="/" className="btn btn-dark">
+            <Link to="/" className="btn btn-dark">
                 Back to Search
             </Link>
             <div className="card grid-2">
@@ -110,7 +107,7 @@ const Userinfo = () => {
                     Public Gists: {public_gists}
                 </div>
             </div>
-            <Repos /> */}
+            <Repos />
         </Fragment>
     );
 };

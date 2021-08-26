@@ -2,7 +2,7 @@
 import React, { ReactElement, useState } from "react";
 import { useGlobalContext } from "../../context/github/githubContext";
 
-const Search = (): ReactElement => {
+const Search: React.FC = (): ReactElement => {
     const [text, settext] = useState<string | "">("");
 
     const { searchUsers, users, clearUsers } = useGlobalContext();
@@ -16,8 +16,26 @@ const Search = (): ReactElement => {
         settext("");
     };
 
+    // const defaultPropsOfContainer = {
+    //     heading: <strong>Maah heading</strong>,
+    // };
+
+    // type ContainerProps = { children: string } & typeof defaultPropsOfContainer;
+
+    // const Container = ({ heading, children }: ContainerProps): ReactElement => {
+    //     return (
+    //         <div>
+    //             <h1>{heading}</h1>
+    //             {children}
+    //         </div>
+    //     );
+    // };
+
+    // Container.defaultProps = defaultPropsOfContainer;
+
     return (
         <div>
+            {/* <Container>Hii everyone</Container> */}
             <form className="x" onSubmit={submitHandler}>
                 <input
                     type="text"
