@@ -15,9 +15,18 @@ interface ParticularUser {
     company?: string | null;
 }
 
+interface moreDetails {
+    langRepoCount?: { [key: string]: number };
+    langStarCount?: { [key: string]: number };
+    langCommitCount?: { [key: string]: number };
+    repoCommitCount?: { [key: string]: number };
+    repoStarCount?: { [key: string]: number };
+}
+
 export interface InitialState {
     users: { avatar_url: string; login: string }[];
     particularuser: ParticularUser;
+    moreDetails: moreDetails;
     createdRepos: Array<string>;
     readme: Array<string>;
     user_repo_url: Array<string>;
@@ -35,7 +44,7 @@ export type Action =
       }
     | {
           type: ActionKind.GET_USERS;
-          payload: ParticularUser;
+          payload: { particularuser: ParticularUser; moredetails: moreDetails };
       }
     | {
           type: ActionKind.GET_USERS_REPOS;
