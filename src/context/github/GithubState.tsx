@@ -14,6 +14,7 @@ const GithubState = ({ children }: InputProps) => {
     const initialState: InitialState = {
         users: [],
         particularuser: {},
+        moreDetails: {},
         createdRepos: [],
         readme: [],
         user_repo_url: [],
@@ -47,24 +48,53 @@ const GithubState = ({ children }: InputProps) => {
         });
         console.log(state.createdRepos, "repos");
         let response = await fetch(`https://api.github.com/users/${username}`);
-        let particulardata = await response.json();
 
-        let newObj = {
-            name: particulardata.name,
-            avatar_url: particulardata.avatar_url,
-            bio: particulardata.bio,
-            login: particulardata.login,
-            html_url: particulardata.html_url,
-            followers: particulardata.followers,
-            following: particulardata.following,
-            public_repos: particulardata.public_repos,
-            blog: particulardata.blog,
-            public_gists: particulardata.public_gists,
-            location: particulardata.location,
-            company: particulardata.company,
-        };
+        // let particulardata = await response.json();
 
-        dispatch({ type: ActionKind.GET_USERS, payload: newObj });
+        let response2 = await fetch(
+            `https://profile-summary-for-github.com/api/user/${username}`,
+            {
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Access-Control-Allow-Origin": "*",
+                },
+            }
+        );
+
+        console.log(response, response2, "in action");
+
+        // let moredetails = await response2.json();
+
+        // console.log(particulardata, moredetails, "in action");
+
+        // let filteredDataObj = {
+        //     langRepoCount: moredetails.langRepoCount,
+        //     langStarCount: moredetails.langStarCount,
+        //     langCommitCount: moredetails.langCommitCount,
+        //     repoCommitCount: moredetails.repoCommitCount,
+        //     repoStarCount: moredetails.repoStarCount,
+        // };
+
+        // let newObj = {
+        //     name: particulardata.name,
+        //     avatar_url: particulardata.avatar_url,
+        //     bio: particulardata.bio,
+        //     login: particulardata.login,
+        //     html_url: particulardata.html_url,
+        //     followers: particulardata.followers,
+        //     following: particulardata.following,
+        //     public_repos: particulardata.public_repos,
+        //     blog: particulardata.blog,
+        //     public_gists: particulardata.public_gists,
+        //     location: particulardata.location,
+        //     company: particulardata.company,
+        // };
+
+        // dispatch({
+        //     type: ActionKind.GET_USERS,
+        //     payload: { particularuser: newObj, moredetails: filteredDataObj },
+        // });
     };
 
     // Get User Repos
@@ -106,6 +136,7 @@ const GithubState = ({ children }: InputProps) => {
             value={{
                 users: state.users,
                 particularuser: state.particularuser,
+                moreDetails: state.moreDetails,
                 createdRepos: state.createdRepos,
                 user_repo_url: state.user_repo_url,
                 readme: state.readme,
