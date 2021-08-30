@@ -6,7 +6,8 @@ import { useGlobalContext } from "../../context/github/githubContext";
 type TParams = { login: string };
 
 const Userinfo = ({ match }: RouteComponentProps<TParams>) => {
-    const { particularuser, getUser, getUserRepos } = useGlobalContext();
+    const { particularuser, moreDetails, getUser, getUserRepos } =
+        useGlobalContext();
     useEffect(() => {
         getUser(match.params.login);
         getUserRepos(match.params.login);
@@ -27,6 +28,8 @@ const Userinfo = ({ match }: RouteComponentProps<TParams>) => {
         location,
         company,
     } = particularuser;
+
+    console.log(moreDetails);
 
     return (
         <Fragment>
