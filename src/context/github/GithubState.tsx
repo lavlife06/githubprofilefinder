@@ -3,7 +3,6 @@ import GithubReducer from "./githubReducer";
 import { GithubContext } from "./githubContext";
 import { ActionKind } from "../types";
 import { InitialState } from "../../interfaces/contextInterfaces";
-
 //useReducer is an alternative to useState.
 
 interface InputProps {
@@ -49,32 +48,54 @@ const GithubState = ({ children }: InputProps) => {
         console.log(state.createdRepos, "repos");
         let response = await fetch(`https://api.github.com/users/${username}`);
 
-        // let particulardata = await response.json();
+        let particulardata = await response.json();
 
         let response2 = await fetch(
-            `https://profile-summary-for-github.com/api/user/${username}`,
-            {
-                mode: "cors",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*",
-                },
-            }
+            `https://api.github.com/users/${username}/repos`
         );
+        let repodetails = await response2.json();
 
-        console.log(response, response2, "in action");
+        let reposPerLanguage: {
+            [key: string]: {
+                count: number | undefined;
+                stars: number | undefined;
+            };
+        } = {};
 
-        // let moredetails = await response2.json();
+        let starsPerRepo: { [key: string]: number } = {};
+
+        for (let item of repodetails) {
+            let type = item.language || "Unkown";
+
+            // reposPerLanguage
+            if (!reposPerLanguage[type]) {
+                reposPerLanguage[type] = {
+                    count: 1,
+                    stars: item.stargazers_count,
+                };
+            } else {
+                reposPerLanguage[type].count =
+                    (reposPerLanguage[type].count || 0) + 1;
+                reposPerLanguage[type].stars =
+                    (reposPerLanguage[type].stars || 0) + item.stargazers_count;
+            }
+
+            //  starsPerRepo
+            starsPerRepo[item.name] = item.stargazers_count;
+        }
+
+        console.log(starsPerRepo, reposPerLanguage, "in action");
 
         // console.log(particulardata, moredetails, "in action");
 
-        // let filteredDataObj = {
-        //     langRepoCount: moredetails.langRepoCount,
-        //     langStarCount: moredetails.langStarCount,
-        //     langCommitCount: moredetails.langCommitCount,
-        //     repoCommitCount: moredetails.repoCommitCount,
-        //     repoStarCount: moredetails.repoStarCount,
-        // };
+        let filteredDataObj = {
+            reposPerLanguage,
+            starsPerRepo,
+            // langStarCount: moredetails.langStarCount,
+            // langCommitCount: moredetails.langCommitCount,
+            // repoCommitCount: moredetails.repoCommitCount,
+            // repoStarCount: moredetails.repoStarCount,
+        };
 
         // let newObj = {
         //     name: particulardata.name,
