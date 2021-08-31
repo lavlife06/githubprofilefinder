@@ -16,11 +16,10 @@ interface ParticularUser {
 }
 
 interface moreDetails {
-    langRepoCount?: { [key: string]: number };
-    langStarCount?: { [key: string]: number };
-    langCommitCount?: { [key: string]: number };
-    repoCommitCount?: { [key: string]: number };
-    repoStarCount?: { [key: string]: number };
+    reposPerLanguage?: { [key: string]: { count: number; stars: number } };
+    starsPerRepo?: { [key: string]: number };
+    // repoCommitCount?: { [key: string]: number };
+    // repoStarCount?: { [key: string]: number };
 }
 
 export interface InitialState {
