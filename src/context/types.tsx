@@ -3,4 +3,5 @@ export const enum ActionKind {
     CLEAR_USERS = "CLEAR_USERS",
     GET_USERS_REPOS = "GET_USERS_REPOS",
     GET_USERS = "GET_USERS",
+    CHANGE_DARK_MODE = "CHANGE_DARK_MODE",
 }
