@@ -40,6 +40,7 @@ const Search: React.FC = (): ReactElement => {
                 <input
                     type="text"
                     name="text"
+                    id="search-field"
                     placeholder="Search Users..."
                     value={text}
                     onChange={changeHandler}
