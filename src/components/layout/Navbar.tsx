@@ -26,7 +26,7 @@ const Navbar = () => {
                 >
                     <Fragment>
                         <img
-                            src={darkMode ? darkImg : whiteImg}
+                            src={darkMode ? whiteImg : darkImg}
                             alt={darkMode ? "WhiteMode" : "DarkMode"}
                         />
                     </Fragment>
