@@ -17,6 +17,7 @@ const GithubReducer = (state: InitialState, action: Action): InitialState => {
             };
         case ActionKind.CLEAR_USERS:
             return {
+                ...state,
                 users: [],
                 particularuser: {},
                 moreDetails: {},
@@ -38,6 +39,11 @@ const GithubReducer = (state: InitialState, action: Action): InitialState => {
                 readme: action.payload.readme,
                 user_repo_url: action.payload.user_repo_url,
                 repos_id: action.payload.repos_id,
+            };
+        case ActionKind.CHANGE_DARK_MODE:
+            return {
+                ...state,
+                darkMode: action.payload,
             };
         default:
             return state;
