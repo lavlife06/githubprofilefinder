@@ -11,6 +11,7 @@ interface InputProps {
 
 const GithubState = ({ children }: InputProps) => {
     const initialState: InitialState = {
+        darkMode: false,
         users: [],
         particularuser: {},
         moreDetails: {},
@@ -45,7 +46,6 @@ const GithubState = ({ children }: InputProps) => {
         dispatch({
             type: ActionKind.CLEAR_USERS,
         });
-        console.log(state.createdRepos, "repos");
         let response = await fetch(`https://api.github.com/users/${username}`);
 
         let particulardata = await response.json();
@@ -84,38 +84,30 @@ const GithubState = ({ children }: InputProps) => {
             starsPerRepo[item.name] = item.stargazers_count;
         }
 
-        console.log(starsPerRepo, reposPerLanguage, "in action");
-
-        // console.log(particulardata, moredetails, "in action");
-
         let filteredDataObj = {
             reposPerLanguage,
             starsPerRepo,
-            // langStarCount: moredetails.langStarCount,
-            // langCommitCount: moredetails.langCommitCount,
-            // repoCommitCount: moredetails.repoCommitCount,
-            // repoStarCount: moredetails.repoStarCount,
         };
 
-        // let newObj = {
-        //     name: particulardata.name,
-        //     avatar_url: particulardata.avatar_url,
-        //     bio: particulardata.bio,
-        //     login: particulardata.login,
-        //     html_url: particulardata.html_url,
-        //     followers: particulardata.followers,
-        //     following: particulardata.following,
-        //     public_repos: particulardata.public_repos,
-        //     blog: particulardata.blog,
-        //     public_gists: particulardata.public_gists,
-        //     location: particulardata.location,
-        //     company: particulardata.company,
-        // };
+        let newObj = {
+            name: particulardata.name,
+            avatar_url: particulardata.avatar_url,
+            bio: particulardata.bio,
+            login: particulardata.login,
+            html_url: particulardata.html_url,
+            followers: particulardata.followers,
+            following: particulardata.following,
+            public_repos: particulardata.public_repos,
+            blog: particulardata.blog,
+            public_gists: particulardata.public_gists,
+            location: particulardata.location,
+            company: particulardata.company,
+        };
 
-        // dispatch({
-        //     type: ActionKind.GET_USERS,
-        //     payload: { particularuser: newObj, moredetails: filteredDataObj },
-        // });
+        dispatch({
+            type: ActionKind.GET_USERS,
+            payload: { particularuser: newObj, moredetails: filteredDataObj },
+        });
     };
 
     // Get User Repos
@@ -137,7 +129,6 @@ const GithubState = ({ children }: InputProps) => {
                 top5 += 1;
             }
         });
-        console.log(state.readme);
 
         dispatch({
             type: ActionKind.GET_USERS_REPOS,
@@ -152,9 +143,24 @@ const GithubState = ({ children }: InputProps) => {
     // Clear Users
     const clearUsers = (): void => dispatch({ type: ActionKind.CLEAR_USERS });
 
+    const setDarkMode = (value: boolean) => {
+        if (!value) {
+            document.body.style.backgroundColor = "#DAE0E2";
+            document.body.style.color = "black";
+        } else {
+            document.body.style.backgroundColor = "#1b262c";
+            document.body.style.color = "#eaf0f1";
+        }
+        dispatch({
+            type: ActionKind.CHANGE_DARK_MODE,
+            payload: value,
+        });
+    };
+
     return (
         <GithubContext.Provider
             value={{
+                darkMode: state.darkMode,
                 users: state.users,
                 particularuser: state.particularuser,
                 moreDetails: state.moreDetails,
@@ -166,6 +172,7 @@ const GithubState = ({ children }: InputProps) => {
                 clearUsers,
                 getUser,
                 getUserRepos,
+                setDarkMode,
             }}
         >
             {children}
