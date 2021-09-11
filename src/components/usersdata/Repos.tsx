@@ -7,7 +7,12 @@ const Repos = () => {
         useGlobalContext();
 
     return (
-        <div>
+        <div
+            style={{
+                display: "flex",
+                flexWrap: "wrap",
+            }}
+        >
             {createdRepos.map((repo: string, index: number) => {
                 return (
                     <Repoitem
