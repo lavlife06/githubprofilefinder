@@ -6,7 +6,7 @@
 :root {
     --primary-color: #dc3545;
     --dark-color: #333333;
-    --light-color: #f4f4f4;
+    --light-color: aquamarine;
     --danger-color: #dc3545;
     --success-color: #28a745;
 }
@@ -18,7 +18,7 @@
 }
 
 body {
-    font-family: "Roboto", sans-serif;
+    font-family: "Alegreya", serif;
     font-size: 1rem;
     line-height: 1.6;
     /* background-color: #fff; */
@@ -32,13 +32,11 @@ body {
 
 #dark {
     /* margin-top: 20px; */
-    margin-left: 300px;
     width: 50px;
     cursor: pointer;
 }
 
 a {
-    color: var(--primary-color);
     text-decoration: none;
 }
 
@@ -414,12 +412,6 @@ table th {
         font-size: 1rem;
     }
 
-    /* Navbar */
-    .navbar {
-        display: block;
-        text-align: center;
-    }
-
     .navbar ul {
         text-align: center;
         justify-content: center;
@@ -444,4 +436,10 @@ table th {
     to {
         box-shadow: 2px 8px 8px -5px rgb(36, 154, 233);
     }
+}
+
+form {
+    display: flex;
+    flex-direction: row;
+    height: 35px;
 }
