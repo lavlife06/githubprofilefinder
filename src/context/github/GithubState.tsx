@@ -31,10 +31,26 @@ const GithubState = ({ children }: InputProps) => {
         let data = await response.json();
         let items = await data.items;
 
-        let newList = items.map((user: typeof items[0]) => {
-            return { login: user.login, avatar_url: user.avatar_url };
-        });
+        console.log(items, "list of users");
 
+        let newList = [];
+
+        for (let item of items) {
+            let response = await fetch(
+                `https://api.github.com/users/${item.login}`
+            );
+
+            let particulardata = await response.json();
+
+            newList.push({
+                login: item.login,
+                avatar_url: item.avatar_url,
+                followers: particulardata.followers,
+                following: particulardata.following,
+                public_repos: particulardata.public_repos,
+            });
+        }
+        console.log(newList, "newlist");
         dispatch({
             type: ActionKind.SEARCH_USERS,
             payload: newList, // It is the actual data which we want to set or send
