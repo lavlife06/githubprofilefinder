@@ -24,16 +24,16 @@ const RepoItem = ({ repo, top5readme, repo_url }: AppProps) => {
                     darkMode ? "dark-repo-details" : "white-repo-details"
                 }
             >
-                <h3 style={{ textDecoration: "underline" }}>
+                <h2 style={{ textDecoration: "underline" }}>
                     <a
                         href={repo_url}
                         rel="noopener noreferrer"
                         target="_blank"
-                        style={{ color: "black" }}
+                        style={{ color: "inherit" }}
                     >
                         {repo}
                     </a>
-                </h3>
+                </h2>
                 <div className="fork-star">
                     <p>Forks: {2}</p>
                     <p id="star">Stars: {3}</p>
