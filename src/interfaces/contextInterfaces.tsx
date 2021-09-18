@@ -22,7 +22,13 @@ export interface moreDetails {
 
 export interface InitialState {
     darkMode: boolean;
-    users: { avatar_url: string; login: string }[];
+    users: {
+        avatar_url: string;
+        login: string;
+        followers: number;
+        following: number;
+        public_repos: number;
+    }[];
     particularuser: ParticularUser;
     moreDetails: moreDetails;
     createdRepos: Array<string>;
@@ -72,7 +78,11 @@ export interface pieChart {
     series: number[];
     options: {
         labels: string[];
-        title: { text: string; align: "right" | "left" | "center" };
+        title: {
+            text: string;
+            align: "right" | "left" | "center";
+            style: { color: string };
+        };
         // responsive: {
         //     breakpoint: number;
         //     options: { chart: { width: number }; legend: { position: string } };
