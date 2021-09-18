@@ -19,14 +19,16 @@ const Userinfo = ({ match }: RouteComponentProps<TParams>) => {
 
     useEffect(() => {
         if (moreDetails.hasOwnProperty("reposPerLanguage")) {
-            let { setChart1Data, setChart2Data, setChart3Data } =
-                setChartdata(moreDetails);
+            let { setChart1Data, setChart2Data, setChart3Data } = setChartdata(
+                moreDetails,
+                darkMode
+            );
 
             setChart1(setChart1Data);
             setChart2(setChart2Data);
             setChart3(setChart3Data);
         }
-    }, [moreDetails]);
+    }, [moreDetails, darkMode]);
 
     const [chart1, setChart1] = useState<pieChart | null>(null);
     const [chart2, setChart2] = useState<pieChart | null>(null);
@@ -115,9 +117,13 @@ const Userinfo = ({ match }: RouteComponentProps<TParams>) => {
                                     href={blog}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    style={{ color: "black" }}
+                                    style={{
+                                        color: !darkMode
+                                            ? "black"
+                                            : "rgb(234, 240, 241)",
+                                    }}
                                 >
-                                    {blog ? blog : "Information not available"}
+                                    {blog ? blog : " Information not available"}
                                 </a>
                             </Fragment>
                         </li>
