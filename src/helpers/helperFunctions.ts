@@ -1,18 +1,23 @@
 import { moreDetails, pieChart } from "../interfaces/contextInterfaces";
 
 export const setChartdata = (
-    chartData: moreDetails
+    chartData: moreDetails,
+    darkMode: boolean
 ): {
     setChart1Data: pieChart;
     setChart2Data: pieChart;
     setChart3Data: pieChart;
 } => {
+    console.log(darkMode, "dm");
     const pieChartData: pieChart = {
         series: [44, 55, 13, 43, 22],
         options: {
             title: {
                 text: "Repos per Language",
-                align: "right",
+                align: "left",
+                style: {
+                    color: !darkMode ? "black" : "rgb(234, 240, 241)",
+                },
             },
             labels: ["Team A", "Team B", "Team C", "Team D", "Team E"],
         },
@@ -48,7 +53,10 @@ export const setChartdata = (
         options: {
             ...pieChartData.options,
             labels,
-            title: { text: "Repos Per Language", align: "right" },
+            title: {
+                text: "Repos Per Language",
+                ...pieChartData.options.title,
+            },
         },
     };
 
@@ -58,7 +66,10 @@ export const setChartdata = (
         options: {
             ...pieChartData.options,
             labels,
-            title: { text: "Stars Per Language", align: "right" },
+            title: {
+                text: "Stars Per Language",
+                ...pieChartData.options.title,
+            },
         },
     };
 
@@ -68,7 +79,10 @@ export const setChartdata = (
         options: {
             ...pieChartData.options,
             labels: labelsRepos,
-            title: { text: "Stars per Repo (top 10)", align: "right" },
+            title: {
+                text: "Stars per Repo (top 10)",
+                ...pieChartData.options.title,
+            },
         },
     };
     return {
@@ -83,7 +97,8 @@ export const clickHandler = (
     login: string,
     targetid: string
 ): void => {
-    if (type === "chart1" || type === "chart2") {
+    if ((type === "chart1" || type === "chart2") && targetid) {
+        console.log(targetid, "targetid");
         window.open(
             `https://github.com/${login}?utf8=%E2%9C%93&tab=repositories&q=&type=source&language=${
                 document.getElementById(targetid).parentElement.attributes[2]
@@ -91,11 +106,13 @@ export const clickHandler = (
             }`
         );
     } else {
-        window.open(
-            `https://github.com/${login}/${
-                document.getElementById(targetid).parentElement.attributes[2]
-                    .nodeValue
-            }`
-        );
+        if (targetid) {
+            window.open(
+                `https://github.com/${login}/${
+                    document.getElementById(targetid).parentElement
+                        .attributes[2].nodeValue
+                }`
+            );
+        }
     }
 };
