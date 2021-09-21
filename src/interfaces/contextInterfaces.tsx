@@ -35,10 +35,14 @@ export interface InitialState {
     readme: Array<string>;
     user_repo_url: Array<string>;
     repos_id: Array<number>;
+    loading: boolean;
     searchUsers?: (text: string) => Promise<void> | undefined;
-    clearUsers?: () => void | undefined;
+    clearUserDetails?: () => void | undefined;
     getUser?: (username: string) => Promise<void> | undefined;
-    getUserRepos?: (username: string) => Promise<void> | undefined;
+    getUserRepos?: (
+        username: string,
+        public_repos: number
+    ) => Promise<void> | undefined;
     setDarkMode?: (value: boolean) => void | undefined;
 }
 
@@ -68,6 +72,12 @@ export type Action =
       }
     | {
           type: ActionKind.CLEAR_USERS;
+      }
+    | {
+          type: ActionKind.CLEAR_MORE_DETAILS;
+      }
+    | {
+          type: ActionKind.CLEAR_REPOS;
       }
     | {
           type: ActionKind.CHANGE_DARK_MODE;
