@@ -1,11 +1,17 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { ReactElement, useState } from "react";
+import React, { Fragment, ReactElement, useEffect, useState } from "react";
 import { useGlobalContext } from "../../context/github/githubContext";
+import Spinner from "../layout/Spinner";
 
 const Search: React.FC = (): ReactElement => {
     const [text, settext] = useState<string | "">("");
 
-    const { searchUsers, users, clearUsers, darkMode } = useGlobalContext();
+    const { searchUsers, darkMode, loading, clearUserDetails } =
+        useGlobalContext();
+
+    useEffect(() => {
+        clearUserDetails();
+    }, []);
 
     const changeHandler = (e: React.ChangeEvent<HTMLInputElement>): void =>
         settext(e.target.value);
@@ -15,7 +21,7 @@ const Search: React.FC = (): ReactElement => {
         if (text.length) {
             searchUsers(text);
         }
-        settext("");
+        // settext("");
     };
 
     // const defaultPropsOfContainer = {
@@ -34,7 +40,9 @@ const Search: React.FC = (): ReactElement => {
     // };
 
     // Container.defaultProps = defaultPropsOfContainer;
-
+    if (loading) {
+        return <Spinner />;
+    }
     return (
         <div>
             {/* <Container>Hii everyone</Container> */}
