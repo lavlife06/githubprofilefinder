@@ -1,5 +1,5 @@
 import React, { useEffect, Fragment, useState } from "react";
-import { Link, RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps, useLocation, Link } from "react-router-dom";
 import Repos from "./Repos";
 import { useGlobalContext } from "../../context/github/githubContext";
 import ReactApexChart from "react-apexcharts";
@@ -7,13 +7,19 @@ import { pieChart } from "../../interfaces/contextInterfaces";
 import { clickHandler, setChartdata } from "../../helpers/helperFunctions";
 
 type TParams = { login: string };
+interface stateType {
+    public_repos: number;
+}
 
 const Userinfo = ({ match }: RouteComponentProps<TParams>) => {
     const { particularuser, moreDetails, getUser, getUserRepos, darkMode } =
         useGlobalContext();
+
+    const { state } = useLocation<stateType>();
+
     useEffect(() => {
         getUser(match.params.login);
-        getUserRepos(match.params.login);
+        getUserRepos(match.params.login, state.public_repos);
         // eslint-disable-next-line
     }, []);
 
@@ -35,10 +41,16 @@ const Userinfo = ({ match }: RouteComponentProps<TParams>) => {
     const [chart3, setChart3] = useState<pieChart | null>(null);
 
     useEffect(() => {
-        let textElement: NodeListOf<Element> =
-            document.querySelectorAll("#chart");
-        console.log(textElement);
-    }, [darkMode]);
+        let textElement = Array.from(
+            document.querySelectorAll(
+                ".apexcharts-legend-text"
+            ) as NodeListOf<HTMLElement>
+        );
+
+        textElement.forEach((ele) => {
+            ele.style.color = !darkMode ? "black" : "rgb(234, 240, 241)";
+        });
+    }, [darkMode, chart1]);
 
     const {
         name,
