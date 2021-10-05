@@ -5,7 +5,6 @@ import { useGlobalContext } from "../../context/github/githubContext";
 const UsersArray = () => {
     const { users, darkMode } = useGlobalContext();
 
-    console.log(users);
     return (
         <div className="usersArrayContainer">
             {users.length

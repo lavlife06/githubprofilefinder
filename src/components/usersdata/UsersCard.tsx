@@ -38,7 +38,12 @@ const UsersCard = ({
                 </ul>
             </div>
             <Link
-                to={`/githubers/${login}`}
+                to={{
+                    pathname: `/githubers/${login}`,
+                    state: {
+                        public_repos,
+                    },
+                }}
                 className={`btn ${mode ? "btn-light" : "btn-dark"} btn-sm my-1`}
             >
                 More
