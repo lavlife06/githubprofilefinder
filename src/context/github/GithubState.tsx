@@ -3,6 +3,10 @@ import GithubReducer from "./githubReducer";
 import { GithubContext } from "./githubContext";
 import { ActionKind } from "../types";
 import { InitialState } from "../../interfaces/contextInterfaces";
+
+const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
+const CLIENT_SECRET = process.env.REACT_APP_CLIENT_SECRET;
+
 //useReducer is an alternative to useState.
 
 interface InputProps {
@@ -12,6 +16,7 @@ interface InputProps {
 const GithubState = ({ children }: InputProps) => {
     const initialState: InitialState = {
         darkMode: false,
+        loading: false,
         users: [],
         particularuser: {},
         moreDetails: {},
@@ -25,13 +30,14 @@ const GithubState = ({ children }: InputProps) => {
 
     // Search Users
     const searchUsers = async (text: string): Promise<void> => {
+        dispatch({
+            type: ActionKind.CLEAR_USERS,
+        });
         let response = await fetch(
-            `https://api.github.com/search/users?q=${text}`
+            `https://api.github.com/search/users?q=${text}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}`
         );
         let data = await response.json();
         let items = await data.items;
-
-        console.log(items, "list of users");
 
         let newList = [];
 
@@ -50,7 +56,6 @@ const GithubState = ({ children }: InputProps) => {
                 public_repos: particulardata.public_repos,
             });
         }
-        console.log(newList, "newlist");
         dispatch({
             type: ActionKind.SEARCH_USERS,
             payload: newList, // It is the actual data which we want to set or send
@@ -60,9 +65,11 @@ const GithubState = ({ children }: InputProps) => {
     // Get User
     const getUser = async (username: string): Promise<void> => {
         dispatch({
-            type: ActionKind.CLEAR_USERS,
+            type: ActionKind.CLEAR_MORE_DETAILS,
         });
-        let response = await fetch(`https://api.github.com/users/${username}`);
+        let response = await fetch(
+            `https://api.github.com/users/${username}?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}`
+        );
 
         let particulardata = await response.json();
 
@@ -127,12 +134,15 @@ const GithubState = ({ children }: InputProps) => {
     };
 
     // Get User Repos
-    const getUserRepos = async (username: string): Promise<void> => {
+    const getUserRepos = async (
+        username: string,
+        public_repos: number
+    ): Promise<void> => {
         dispatch({
-            type: ActionKind.CLEAR_USERS,
+            type: ActionKind.CLEAR_REPOS,
         });
         let response = await fetch(
-            `https://api.github.com/users/${username}/repos`
+            `https://api.github.com/users/${username}/repos?per_page=${public_repos}&sort=created:asc&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}`
         );
         let userRepos = await response.json();
         let top5 = 0;
@@ -157,7 +167,10 @@ const GithubState = ({ children }: InputProps) => {
         });
     };
     // Clear Users
-    const clearUsers = (): void => dispatch({ type: ActionKind.CLEAR_USERS });
+    const clearUserDetails = (): void => {
+        dispatch({ type: ActionKind.CLEAR_MORE_DETAILS });
+        dispatch({ type: ActionKind.CLEAR_REPOS });
+    };
 
     const setDarkMode = (value: boolean) => {
         if (!value) {
@@ -184,8 +197,9 @@ const GithubState = ({ children }: InputProps) => {
                 user_repo_url: state.user_repo_url,
                 readme: state.readme,
                 repos_id: state.repos_id,
+                loading: state.loading,
                 searchUsers,
-                clearUsers,
+                clearUserDetails,
                 getUser,
                 getUserRepos,
                 setDarkMode,
