@@ -8,7 +8,6 @@ export const setChartdata = (
     setChart2Data: pieChart;
     setChart3Data: pieChart;
 } => {
-    console.log(darkMode, "dm");
     const pieChartData: pieChart = {
         series: [44, 55, 13, 43, 22],
         options: {
@@ -98,7 +97,6 @@ export const clickHandler = (
     targetid: string
 ): void => {
     if ((type === "chart1" || type === "chart2") && targetid) {
-        console.log(targetid, "targetid");
         window.open(
             `https://github.com/${login}?utf8=%E2%9C%93&tab=repositories&q=&type=source&language=${
                 document.getElementById(targetid).parentElement.attributes[2]
