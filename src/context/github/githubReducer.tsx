@@ -8,23 +8,27 @@ const GithubReducer = (state: InitialState, action: Action): InitialState => {
             return {
                 ...state,
                 users: action.payload,
-                particularuser: {},
-                moreDetails: {},
-                createdRepos: [],
-                readme: [],
-                user_repo_url: [],
-                repos_id: [],
+                loading: false,
             };
         case ActionKind.CLEAR_USERS:
             return {
                 ...state,
                 users: [],
-                particularuser: {},
-                moreDetails: {},
+                loading: true,
+            };
+        case ActionKind.CLEAR_REPOS:
+            return {
+                ...state,
                 createdRepos: [],
                 readme: [],
                 user_repo_url: [],
                 repos_id: [],
+            };
+        case ActionKind.CLEAR_MORE_DETAILS:
+            return {
+                ...state,
+                particularuser: {},
+                moreDetails: {},
             };
         case ActionKind.GET_USERS:
             return {
