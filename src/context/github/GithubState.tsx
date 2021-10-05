@@ -4,6 +4,9 @@ import { GithubContext } from "./githubContext";
 import { ActionKind } from "../types";
 import { InitialState } from "../../interfaces/contextInterfaces";
 
+const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
+const CLIENT_SECRET = process.env.REACT_APP_CLIENT_SECRET;
+
 //useReducer is an alternative to useState.
 
 interface InputProps {
@@ -12,8 +15,11 @@ interface InputProps {
 
 const GithubState = ({ children }: InputProps) => {
     const initialState: InitialState = {
+        darkMode: false,
+        loading: false,
         users: [],
         particularuser: {},
+        moreDetails: {},
         createdRepos: [],
         readme: [],
         user_repo_url: [],
@@ -24,16 +30,32 @@ const GithubState = ({ children }: InputProps) => {
 
     // Search Users
     const searchUsers = async (text: string): Promise<void> => {
+        dispatch({
+            type: ActionKind.CLEAR_USERS,
+        });
         let response = await fetch(
-            `https://api.github.com/search/users?q=${text}`
+            `https://api.github.com/search/users?q=${text}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}`
         );
         let data = await response.json();
         let items = await data.items;
 
-        let newList = items.map((user: typeof items[0]) => {
-            return { login: user.login, avatar_url: user.avatar_url };
-        });
+        let newList = [];
 
+        for (let item of items) {
+            let response = await fetch(
+                `https://api.github.com/users/${item.login}`
+            );
+
+            let particulardata = await response.json();
+
+            newList.push({
+                login: item.login,
+                avatar_url: item.avatar_url,
+                followers: particulardata.followers,
+                following: particulardata.following,
+                public_repos: particulardata.public_repos,
+            });
+        }
         dispatch({
             type: ActionKind.SEARCH_USERS,
             payload: newList, // It is the actual data which we want to set or send
@@ -43,11 +65,52 @@ const GithubState = ({ children }: InputProps) => {
     // Get User
     const getUser = async (username: string): Promise<void> => {
         dispatch({
-            type: ActionKind.CLEAR_USERS,
+            type: ActionKind.CLEAR_MORE_DETAILS,
         });
-        console.log(state.createdRepos, "repos");
-        let response = await fetch(`https://api.github.com/users/${username}`);
+        let response = await fetch(
+            `https://api.github.com/users/${username}?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}`
+        );
+
         let particulardata = await response.json();
+
+        let response2 = await fetch(
+            `https://api.github.com/users/${username}/repos`
+        );
+        let repodetails = await response2.json();
+
+        let reposPerLanguage: {
+            [key: string]: {
+                count: number | undefined;
+                stars: number | undefined;
+            };
+        } = {};
+
+        let starsPerRepo: { [key: string]: number } = {};
+
+        for (let item of repodetails) {
+            let type = item.language || "Unkown";
+
+            // reposPerLanguage
+            if (!reposPerLanguage[type]) {
+                reposPerLanguage[type] = {
+                    count: 1,
+                    stars: item.stargazers_count,
+                };
+            } else {
+                reposPerLanguage[type].count =
+                    (reposPerLanguage[type].count || 0) + 1;
+                reposPerLanguage[type].stars =
+                    (reposPerLanguage[type].stars || 0) + item.stargazers_count;
+            }
+
+            //  starsPerRepo
+            starsPerRepo[item.name] = item.stargazers_count;
+        }
+
+        let filteredDataObj = {
+            reposPerLanguage,
+            starsPerRepo,
+        };
 
         let newObj = {
             name: particulardata.name,
@@ -64,16 +127,22 @@ const GithubState = ({ children }: InputProps) => {
             company: particulardata.company,
         };
 
-        dispatch({ type: ActionKind.GET_USERS, payload: newObj });
+        dispatch({
+            type: ActionKind.GET_USERS,
+            payload: { particularuser: newObj, moredetails: filteredDataObj },
+        });
     };
 
     // Get User Repos
-    const getUserRepos = async (username: string): Promise<void> => {
+    const getUserRepos = async (
+        username: string,
+        public_repos: number
+    ): Promise<void> => {
         dispatch({
-            type: ActionKind.CLEAR_USERS,
+            type: ActionKind.CLEAR_REPOS,
         });
         let response = await fetch(
-            `https://api.github.com/users/${username}/repos`
+            `https://api.github.com/users/${username}/repos?per_page=${public_repos}&sort=created:asc&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}`
         );
         let userRepos = await response.json();
         let top5 = 0;
@@ -86,7 +155,6 @@ const GithubState = ({ children }: InputProps) => {
                 top5 += 1;
             }
         });
-        console.log(state.readme);
 
         dispatch({
             type: ActionKind.GET_USERS_REPOS,
@@ -99,21 +167,42 @@ const GithubState = ({ children }: InputProps) => {
         });
     };
     // Clear Users
-    const clearUsers = (): void => dispatch({ type: ActionKind.CLEAR_USERS });
+    const clearUserDetails = (): void => {
+        dispatch({ type: ActionKind.CLEAR_MORE_DETAILS });
+        dispatch({ type: ActionKind.CLEAR_REPOS });
+    };
+
+    const setDarkMode = (value: boolean) => {
+        if (!value) {
+            document.body.style.backgroundColor = "#DAE0E2";
+            document.body.style.color = "black";
+        } else {
+            document.body.style.backgroundColor = "#1b262c";
+            document.body.style.color = "#eaf0f1";
+        }
+        dispatch({
+            type: ActionKind.CHANGE_DARK_MODE,
+            payload: value,
+        });
+    };
 
     return (
         <GithubContext.Provider
             value={{
+                darkMode: state.darkMode,
                 users: state.users,
                 particularuser: state.particularuser,
+                moreDetails: state.moreDetails,
                 createdRepos: state.createdRepos,
                 user_repo_url: state.user_repo_url,
                 readme: state.readme,
                 repos_id: state.repos_id,
+                loading: state.loading,
                 searchUsers,
-                clearUsers,
+                clearUserDetails,
                 getUser,
                 getUserRepos,
+                setDarkMode,
             }}
         >
             {children}

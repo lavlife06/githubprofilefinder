@@ -3,21 +3,17 @@ import UsersCard from "./UsersCard";
 import { useGlobalContext } from "../../context/github/githubContext";
 
 const UsersArray = () => {
-    const { users } = useGlobalContext();
+    const { users, darkMode } = useGlobalContext();
 
     return (
-        <div style={userStyle}>
-            {users.map((user, index) => (
-                <UsersCard key={index} user={user} />
-            ))}
+        <div className="usersArrayContainer">
+            {users.length
+                ? users.map((user, index) => (
+                      <UsersCard key={index} user={user} mode={darkMode} />
+                  ))
+                : null}
         </div>
     );
-};
-
-const userStyle = {
-    display: "grid",
-    gridTemplateColumns: "repeat(3, 1fr)",
-    gridGap: "1rem",
 };
 
 export default UsersArray;

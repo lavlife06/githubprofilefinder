@@ -1,19 +1,27 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { ReactElement, useState } from "react";
+import React, { Fragment, ReactElement, useEffect, useState } from "react";
 import { useGlobalContext } from "../../context/github/githubContext";
+import Spinner from "../layout/Spinner";
 
 const Search: React.FC = (): ReactElement => {
     const [text, settext] = useState<string | "">("");
 
-    const { searchUsers, users, clearUsers } = useGlobalContext();
+    const { searchUsers, darkMode, loading, clearUserDetails } =
+        useGlobalContext();
+
+    useEffect(() => {
+        clearUserDetails();
+    }, []);
 
     const changeHandler = (e: React.ChangeEvent<HTMLInputElement>): void =>
         settext(e.target.value);
 
     const submitHandler = (e: React.FormEvent<HTMLFormElement>): void => {
         e.preventDefault();
-        searchUsers(text);
-        settext("");
+        if (text.length) {
+            searchUsers(text);
+        }
+        // settext("");
     };
 
     // const defaultPropsOfContainer = {
@@ -32,29 +40,40 @@ const Search: React.FC = (): ReactElement => {
     // };
 
     // Container.defaultProps = defaultPropsOfContainer;
-
+    if (loading) {
+        return <Spinner />;
+    }
     return (
         <div>
             {/* <Container>Hii everyone</Container> */}
             <form className="x" onSubmit={submitHandler}>
                 <input
-                    type="text"
-                    name="text"
+                    type="search"
+                    name="search"
+                    id="search-field"
                     placeholder="Search Users..."
                     value={text}
                     onChange={changeHandler}
+                    style={{
+                        width: "100%",
+                        height: "100%",
+                        margin: "0px",
+                        paddingLeft: "10px",
+                    }}
                 />
                 <input
                     type="submit"
                     value="Search"
-                    className="btn btn-dark btn-block"
+                    className={`btn ${
+                        darkMode ? "btn-light" : "btn-dark"
+                    } btn-block`}
+                    style={{
+                        height: "100%",
+                        width: "100px",
+                        borderRadius: "5px",
+                    }}
                 />
             </form>
-            {users.length > 0 && (
-                <button className="btn btn-dark btn-block" onClick={clearUsers}>
-                    Clear
-                </button>
-            )}
         </div>
     );
 };

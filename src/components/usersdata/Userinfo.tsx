@@ -1,17 +1,56 @@
-import React, { useEffect, Fragment } from "react";
-import { Link, RouteComponentProps } from "react-router-dom";
+import React, { useEffect, Fragment, useState } from "react";
+import { RouteComponentProps, useLocation, Link } from "react-router-dom";
 import Repos from "./Repos";
 import { useGlobalContext } from "../../context/github/githubContext";
+import ReactApexChart from "react-apexcharts";
+import { pieChart } from "../../interfaces/contextInterfaces";
+import { clickHandler, setChartdata } from "../../helpers/helperFunctions";
 
 type TParams = { login: string };
+interface stateType {
+    public_repos: number;
+}
 
 const Userinfo = ({ match }: RouteComponentProps<TParams>) => {
-    const { particularuser, getUser, getUserRepos } = useGlobalContext();
+    const { particularuser, moreDetails, getUser, getUserRepos, darkMode } =
+        useGlobalContext();
+
+    const { state } = useLocation<stateType>();
+
     useEffect(() => {
         getUser(match.params.login);
-        getUserRepos(match.params.login);
+        getUserRepos(match.params.login, state.public_repos);
         // eslint-disable-next-line
     }, []);
+
+    useEffect(() => {
+        if (moreDetails.hasOwnProperty("reposPerLanguage")) {
+            let { setChart1Data, setChart2Data, setChart3Data } = setChartdata(
+                moreDetails,
+                darkMode
+            );
+
+            setChart1(setChart1Data);
+            setChart2(setChart2Data);
+            setChart3(setChart3Data);
+        }
+    }, [moreDetails, darkMode]);
+
+    const [chart1, setChart1] = useState<pieChart | null>(null);
+    const [chart2, setChart2] = useState<pieChart | null>(null);
+    const [chart3, setChart3] = useState<pieChart | null>(null);
+
+    useEffect(() => {
+        let textElement = Array.from(
+            document.querySelectorAll(
+                ".apexcharts-legend-text"
+            ) as NodeListOf<HTMLElement>
+        );
+
+        textElement.forEach((ele) => {
+            ele.style.color = !darkMode ? "black" : "rgb(234, 240, 241)";
+        });
+    }, [darkMode, chart1]);
 
     const {
         name,
@@ -30,7 +69,10 @@ const Userinfo = ({ match }: RouteComponentProps<TParams>) => {
 
     return (
         <Fragment>
-            <Link to="/" className="btn btn-dark">
+            <Link
+                to="/"
+                className={`btn ${darkMode ? "btn-light" : "btn-dark"}`}
+            >
                 Back to Search
             </Link>
             <div className="card grid-2">
@@ -42,20 +84,23 @@ const Userinfo = ({ match }: RouteComponentProps<TParams>) => {
                         style={{ width: "150px" }}
                     />
                     <h1>{name}</h1>
-                    <p>Location: {location}</p>
+                    <p>
+                        Location:{" "}
+                        {location ? location : "Information not available"}
+                    </p>
                 </div>
                 <div>
-                    {bio && (
-                        <Fragment>
-                            <h3>Bio</h3>
-                            <p>{bio}</p>
-                        </Fragment>
-                    )}
+                    <Fragment>
+                        <h3>Bio</h3>
+                        <p>{bio ? bio : "Bio info not provided"}</p>
+                    </Fragment>
                     <a
                         href={html_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="btn btn-dark my-1"
+                        className={`btn ${
+                            darkMode ? "btn-light" : "btn-dark"
+                        } my-1`}
                     >
                         Visit Github Profile
                     </a>
@@ -69,26 +114,30 @@ const Userinfo = ({ match }: RouteComponentProps<TParams>) => {
                         </li>
 
                         <li>
-                            {company && (
-                                <Fragment>
-                                    <strong>Company: </strong> {company}
-                                </Fragment>
-                            )}
+                            <Fragment>
+                                <strong>Company: </strong>{" "}
+                                {company
+                                    ? company
+                                    : "Information not available"}
+                            </Fragment>
                         </li>
 
                         <li>
-                            {blog && (
-                                <Fragment>
-                                    <strong>Website: </strong>
-                                    <a
-                                        href={blog}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        {blog}
-                                    </a>
-                                </Fragment>
-                            )}
+                            <Fragment>
+                                <strong>Website:</strong>
+                                <a
+                                    href={blog}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{
+                                        color: !darkMode
+                                            ? "black"
+                                            : "rgb(234, 240, 241)",
+                                    }}
+                                >
+                                    {blog ? blog : " Information not available"}
+                                </a>
+                            </Fragment>
                         </li>
                     </ul>
                 </div>
@@ -106,6 +155,47 @@ const Userinfo = ({ match }: RouteComponentProps<TParams>) => {
                 <div className="badge badge-light">
                     Public Gists: {public_gists}
                 </div>
+            </div>
+            <div id="chart" style={{ display: "flex", flexWrap: "wrap" }}>
+                {chart1 && (
+                    <ReactApexChart
+                        id="chartid"
+                        options={chart1.options}
+                        series={chart1.series}
+                        type="pie"
+                        width={400}
+                        onClick={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            e.persist();
+                            clickHandler("chart1", login, e.target.id);
+                        }}
+                    />
+                )}
+                {chart2 && (
+                    <ReactApexChart
+                        id="chartid"
+                        options={chart2.options}
+                        series={chart2.series}
+                        type="pie"
+                        width={400}
+                        onClick={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            e.persist();
+                            clickHandler("chart2", login, e.target.id);
+                        }}
+                    />
+                )}
+                {chart3 && (
+                    <ReactApexChart
+                        id="chartid"
+                        options={chart3.options}
+                        series={chart3.series}
+                        type="pie"
+                        width={500}
+                        onClick={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            e.persist();
+                            clickHandler("chart3", login, e.target.id);
+                        }}
+                    />
+                )}
             </div>
             <Repos />
         </Fragment>
